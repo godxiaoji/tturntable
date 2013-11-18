@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>抽奖转盘</title>
+    <style type="text/css">
+        /* reset.css */
+        body,h1,h2,h3,h4,h5,h6,p,blockquote,
+        dl,dt,dd,ul,ol,li,
+        pre,code,
+        form,fieldset,legend,button,input,textarea,
+        th,td{margin:0;padding:0;}
+        body,button,input,select,textarea{font:12px/1.5 Tahoma, Arial, "SimSun";}
+        input,select,button,textarea{font-size:100%;}
+        h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
+        ol,ul{list-style:none;}
+        em,strong{font-style:normal;font-weight:normal;}
+        fieldset,img{border:0;}
+        table{border-collapse:collapse;border-spacing:0;}
+        html,body{width:100%;height:100%;}
+        a{text-decoration:none;}
+        a:hover{text-decoration:underline;}
+        a:active{background-color: transparent;}
+        .clearfix:after{content:"\200B";display:block;height:0;clear:both;}
+        .clearfix{*zoom:1;}
+        /* turntable */
+        .tt{position: relative; width: 500px; height: 500px;}
+        .tt-item{position: absolute; width: 100px; height: 100px; background-color: #f60;}
+        .tt-item strong{display: block; height: 98px; border: 1px solid #fff; font: 24px/98px "Microsoft YaHei"; text-align: center;}
+        .tt-item1{left: 0; top: 0;}
+        .tt-item2{left: 100px; top: 0;}
+        .tt-item3{left: 200px; top: 0;}
+        .tt-item4{left: 300px; top: 0;}
+        .tt-item5{left: 400px; top: 0;}
+        .tt-item6{left: 400px; top: 100px;}
+        .tt-item7{left: 400px; top: 200px;}
+        .tt-item8{left: 400px; top: 300px;}
+        .tt-item9{left: 400px; top: 400px;}
+        .tt-item10{left: 300px; top: 400px;}
+        .tt-item11{left: 200px; top: 400px;}
+        .tt-item12{left: 100px; top: 400px;}
+        .tt-item13{left: 0; top: 400px;}
+        .tt-item14{left: 0; top: 300px;}
+        .tt-item15{left: 0; top: 200px;}
+        .tt-item16{left: 0; top: 100px;}
+        .tt .current{background-color: #f00; color: #fff;}
+        .tt-start{position: absolute; left: 200px; top: 200px; width: 100px; height: 100px; background-color: #f60;}
+        .tt-start a{display: block; height: 100px; font: 40px/100px "Microsoft YaHei"; text-align: center; color: #fff;}
+        .tt-start a:hover{background-color: #f00; text-decoration: none;}
+        .tt-tips{width: 500px; padding: 10px 0;}
+        .tt-tips li{float: left; width: 125px;}
+    </style>
+</head>
+<body>
+    <center>
+	<div id="J_Tt" class="tt">
+        <ul id="J_Tt_list" class="tt-list">
+            <li class="tt-item tt-item1 js-tt-item current"><strong>开始</strong></li>
+            <li class="tt-item tt-item2 js-tt-item"><strong>菊花哥</strong></li>
+            <li class="tt-item tt-item3 js-tt-item"><strong>补丁哥</strong></li>
+            <li class="tt-item tt-item4 js-tt-item"><strong>新典</strong></li>
+            <li class="tt-item tt-item5 js-tt-item"><strong>舟大神</strong></li>
+            <li class="tt-item tt-item6 js-tt-item"><strong>昆大神</strong></li>
+            <li class="tt-item tt-item7 js-tt-item"><strong>欢大神</strong></li>
+            <li class="tt-item tt-item8 js-tt-item"><strong>小军军</strong></li>
+            <li class="tt-item tt-item9 js-tt-item"><strong>海哥</strong></li>
+            <li class="tt-item tt-item10 js-tt-item"><strong>小飞飞</strong></li>
+            <li class="tt-item tt-item11 js-tt-item"><strong>小勇</strong></li>
+            <li class="tt-item tt-item12 js-tt-item"><strong>路人甲</strong></li>
+            <li class="tt-item tt-item13 js-tt-item"><strong>路人乙</strong></li>
+            <li class="tt-item tt-item14 js-tt-item"><strong>路人丙</strong></li>
+            <li class="tt-item tt-item15 js-tt-item"><strong>路人丁</strong></li>
+            <li class="tt-item tt-item16 js-tt-item"><strong>路人戊</strong></li>
+        </ul>
+        <div class="tt-start"><a id="J_Tt_Start" class="js-tt-start" href="javascript:void(0);">抽奖</a></div>
+    </div>
+    <ul class="tt-tips clearfix">
+        <li>提示：<em id="J_Tips_Title"></em></li>
+        <li>索引：<em id="J_Tips_Index">0</em></li>
+        <li>圈数：<em id="J_Tips_Circle">0</em></li>
+        <li>停止：<em id="J_Tips_Step">0</em></li>
+    </ul>
+    </center>
+    <script type="text/javascript" src="tTurntable.min.js"></script>
+    <script type="text/javascript">
+        function G(id) {
+            return document.getElementById(id);
+        }
+        
+        var tt;
+
+        // 设置提示
+        var Tips = {
+            elems: [
+                G("J_Tips_Title"),
+                G("J_Tips_Index"),
+                G("J_Tips_Circle"),
+                G("J_Tips_Step")
+            ],
+            set: function(data) {
+                Tips.elems[0].innerHTML = (data.title || "");
+                Tips.elems[1].innerHTML = data.index;
+                Tips.elems[2].innerHTML = data.circle;
+                Tips.elems[3].innerHTML = data.endStep;
+            }
+        };
+        
+        
+        window.onload = function() {
+            var wrap = G("J_Tt_list"),
+                list = wrap.getElementsByTagName("li");
+
+            tt = tTurntable({
+                selector: "#J_Tt",
+                timeoutStep: 200,
+                start: function() {
+                    var time = parseInt(Math.random()*1000)+2000,
+                        index = time % 16,
+                        self = this;
+                    setTimeout(function() {
+                        self.setEndIndex(index);
+                        self.setServerData(null);
+                    }, time);
+                },
+                turn: function(turnData) {
+                    turnData.title = "转动";
+                    Tips.set(turnData);
+                },
+                running: function(turnData) {
+                    turnData.title = "运行中";
+                    Tips.set(turnData);
+                },
+                end: function(turnData, serverData) {
+                    var test = list[turnData.index].innerText || list[turnData.index].textContent;
+                    turnData.title = "运行结束";
+                    Tips.set(turnData);
+                    alert('恭喜您，嫁给了'+test);
+                }
+            });
+        };
+    </script>
+</body>
+</html>
