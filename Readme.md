@@ -65,6 +65,7 @@ Javascript抽奖插件
 	                self.setServerData(data); // 传递服务端数据
 				}
 			});
+			return true;
         }
 	});
 
@@ -144,7 +145,7 @@ Javascript抽奖插件
 
 以上配置项除了 `timeoutStep`，其他一般情况不需要改动。
 
-* `start()`: 点击开始按钮后执行的函数，一般去服务端请求的结果并设置，或者也可以自己随机一下。该函数配合上面提到的 `.setEndStep(step)` / `.setEndIndex(index)` / `.setServerData(data)` 可以把结果设置到插件中，以便转盘停转的时候获取到参数。
+* `start()`: 点击开始按钮后执行的函数，一般去服务端请求的结果并设置，或者也可以自己随机一下。该函数配合上面提到的 `.setEndStep(step)` / `.setEndIndex(index)` / `.setServerData(data)` 可以把结果设置到插件中，以便转盘停转的时候获取到参数。该函数必须返回`true`转盘才会开始转动。返回`false`可以取消转动。
 * `turn(turnData)`: 每跳动一次执行的函数，一般情况下用不到。不过也有情况用到的，如记录或者圆形转盘中间的指针变化。
 * `running(turnData)`: 转动中如果点开始按钮就会执行该函数。
 * `end(turnData, serverData)`: 转动停止时调用的函数，这时候可以弹窗告诉用户结果等，如果之前没有设置了服务端数据，则 `serverData` 为 `null`。

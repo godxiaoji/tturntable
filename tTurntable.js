@@ -2,7 +2,7 @@
  * tTurntable
  * @Author  Travis(LinYongji)
  * @Contact http://travisup.com/
- * @Version 1.0.0
+ * @Version 1.0.1
  * @date    2013-11-18
  */
 (function() {
@@ -223,14 +223,18 @@
         };
         // 开始转动
         this.start = function() {
+            // 是否开始
+            var isStart;
             if(running === false) {
-                // 初始化数据
-                self.reset();
-                running = true;
-                // 开始转动
-                setTimeout(turn, speed);
                 // 调用自定义函数
-                options.start.call(self);
+                isStart = options.start.call(self);
+                if(isStart) {
+                    // 初始化数据
+                    self.reset();
+                    running = true;
+                    // 开始转动
+                    setTimeout(turn, speed);
+                }
             } else {
                 // 运行中点start无效
                 options.running.call(self, turnData);
